@@ -25,9 +25,7 @@ const getMeasurementsByDate = async (startDate, endDate) => {
 const deleteMeasurementById = async id => {
   const { deletedCount } = await Measurement.deleteOne({ _id: id })
 
-  return {
-    deletedMeasurements: deletedCount
-  }
+  return deletedCount
 }
 
 module.exports = {

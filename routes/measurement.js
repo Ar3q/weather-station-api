@@ -60,16 +60,21 @@ router
     res.status(200).json(measurement)
   })
   .delete(async (req, res, next) => {
-    let deletedInfo
+    let numberOfDeletedMeasurements
     try {
-      deletedInfo = await measurementService.deleteMeasurementById(
+      numberOfDeletedMeasurements = await measurementService.deleteMeasurementById(
         req.params.id
       )
     } catch (error) {
+      error.statusCode = 404
       return next(error)
     }
 
-    res.json(deletedInfo)
+    !numberOfDeletedMeasurements && res.status(404)
+
+    res.json({
+      deletedMeasurements: numberOfDeletedMeasurements
+    })
   })
 
 module.exports = router

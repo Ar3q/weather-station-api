@@ -6,7 +6,9 @@ const cors = require('cors')
 const measurementRouter = require('./routes/measurement')
 
 const mongoose = require('mongoose')
-const mongoDbUrl = process.env.DB_URL
+const mongoDbUrl =
+  process.env.NODE_ENV !== 'test' ? process.env.DB_URL : process.env.DB_URL_TEST
+
 try {
   mongoose.connect(mongoDbUrl, {
     useNewUrlParser: true,
@@ -17,7 +19,6 @@ try {
 }
 
 const app = express()
-const port = process.env.PORT || 3000
 
 app.use(cors())
 app.use(logger('dev'))
@@ -38,11 +39,6 @@ app.use((err, req, res, next) => {
   res.status(code).json({
     error: err.message
   })
-})
-
-app.listen(port, () => {
-  // eslint-disable-next-line no-console
-  console.log(`App listening on port: ${port}`)
 })
 
 module.exports = app
