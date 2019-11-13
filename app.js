@@ -3,6 +3,10 @@ const express = require('express')
 const logger = require('morgan')
 const cors = require('cors')
 
+const swaggerUi = require('swagger-ui-express')
+const YAML = require('yamljs')
+const swaggerDocument = YAML.load(`${__dirname}/swagger.yaml`)
+
 const measurementRouter = require('./routes/measurement')
 
 const mongoose = require('mongoose')
@@ -26,6 +30,8 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
 app.use('/api/measurements', measurementRouter)
+
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 app.use((err, req, res, next) => {
   if (res.headersSent) {

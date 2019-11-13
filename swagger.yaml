@@ -1,0 +1,168 @@
+openapi: 3.0.0
+info:
+  title: Weather Station API
+  description: API for collecting and consuming weather station's measurements
+  version: 1.0.0
+paths:
+  /api/measurements:
+    get:
+      summary: Returns a list of measurements.
+      parameters:
+        - name: startDate
+          in: query
+          required: false
+          description: For showing measurments since the concrete date. Start date for range. Can be used without endDate.
+          schema:
+            type: string
+        - name: endDate
+          in: query
+          required: false
+          description: For showing measurments since the concrete date. End date for range. Can only be used with startDate.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A JSON array of measurements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Measurement'
+    post:
+      summary: Creates a new measurement.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeasurementToCreate'
+      responses:
+        '201':
+          description: A JSON with created measurement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Measurement'
+        '400':
+          description: A JSON with error information.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotCreated'
+
+  /api/measurements/{id}:
+    get:
+      summary: Returns the measurement with id.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Measurement id
+      responses:
+        '200':
+          description: A JSON with measurement with requested id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Measurement'
+        '404':
+          description: A JSON with error information. Returned when cannot find measurement with id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+    delete:
+      summary: Deletes the measurement with id.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Measurement id
+      responses:
+        '200':
+          description: A JSON with information how many rows have been deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletedOne'
+        '404':
+          description: A JSON with information how many rows has been deleted.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/DeletedZero'
+                  - $ref: '#/components/schemas/ErrorNotFound'
+components:
+  schemas:
+    Measurement:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: '5dc6fc64be18ad0013cfbfc3'
+        temperature:
+          type: number
+          example: 23.5
+        illuminace:
+          type: number
+          example: 10
+        humidity:
+          type: number
+          example: 76.5
+        rain:
+          type: boolean
+          example: false
+        date:
+          type: string
+          example: '2019-11-12T20:34:00.000'
+        __v:
+          type: number
+          description: MongoDB related property set on each document
+    MeasurementToCreate:
+      type: object
+      properties:
+        temperature:
+          type: number
+          example: 23.5
+        illuminace:
+          type: number
+          example: 10
+        humidity:
+          type: number
+          example: 76.5
+        rain:
+          type: boolean
+          example: false
+        date:
+          type: string
+          example: '2019-11-12T20:34:00.000'
+    ErrorNotFound:
+      type: object
+      properties:
+        error:
+          type: string
+          example: 'Measurment with id: 5dc6fc64be18ad0013cfbfa2 not found'
+    ErrorNotCreated:
+      type: object
+      properties:
+        error:
+          type: string
+          example: 'Measurement validation failed: temperature: Path `temperature` (-1000) is less than minimum allowed value (-273).'
+    DeletedOne:
+      type: object
+      properties:
+        deletedMeasurements:
+          type: integer
+          example: 1
+    DeletedZero:
+      type: object
+      properties:
+        deletedMeasurements:
+          type: integer
+          example: 0
