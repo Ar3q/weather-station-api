@@ -16,6 +16,7 @@ router
         ? await measurementService.getMeasurementsByDate(startDate, endDate)
         : await measurementService.getAllMeasurements()
     } catch (error) {
+      error.statusCode = 400
       return next(error)
     }
 
