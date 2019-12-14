@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "export NODE_ENV=production && node server.js",
+    "start-pm": "export NODE_ENV=production && pm2-runtime server.js",
     "dev": "nodemon server.js",
     "test": "export NODE_ENV=test && mocha --timeout 20000 --exit",
     "lint": "eslint ./"

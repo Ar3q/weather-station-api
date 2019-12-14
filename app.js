@@ -48,4 +48,14 @@ app.use((err, req, res, next) => {
   })
 })
 
+process.on('SIGINT', async () => {
+  try {
+    await mongoose.connection.close()
+    console.info('Connection with MongoDB closed')
+    process.exit(0)
+  } catch (error) {
+    process.exit(1)
+  }
+})
+
 module.exports = app
